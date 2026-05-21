@@ -33,5 +33,8 @@ The first version should expose exactly five endpoints:
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `GET` | `/api/tasks` | Return the full task list. |
-| `POST` | `/api/tasks` | Create a new task. |
+| `GET` | `/api/tasks` | Return all tasks. |
+| `POST` | `/api/tasks` | Create a task. |
+| `PUT` | `/api/tasks/{id}` | Edit a task. |
+| `DELETE` | `/api/tasks/{id}` | Delete a task. |
+| `PATCH` | `/api/tasks/{id}/complete` | Mark a task as completed. |
