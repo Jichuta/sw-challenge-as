@@ -1,0 +1,239 @@
+openapi: 3.0.3
+info:
+  title: Personal Task List API
+  version: 1.0.0
+  description: Minimal REST API for managing a personal task list.
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+
+tags:
+  - name: Tasks
+    description: Personal task list operations
+
+paths:
+  /api/tasks:
+    get:
+      tags:
+        - Tasks
+      summary: List tasks
+      description: Returns all tasks in the personal task list.
+      operationId: listTasks
+      responses:
+        "200":
+          description: Task list returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+
+    post:
+      tags:
+        - Tasks
+      summary: Create task
+      description: Creates a new task with a required title and optional description.
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskRequest"
+      responses:
+        "201":
+          description: Task created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /api/tasks/{id}:
+    put:
+      tags:
+        - Tasks
+      summary: Update task
+      description: Updates the title and description of an existing task.
+      operationId: updateTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskRequest"
+      responses:
+        "200":
+          description: Task updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - Tasks
+      summary: Delete task
+      description: Deletes an existing task.
+      operationId: deleteTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      responses:
+        "200":
+          description: Task deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteTaskResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/tasks/{id}/complete:
+    patch:
+      tags:
+        - Tasks
+      summary: Complete task
+      description: Marks an existing task as completed.
+      operationId: completeTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      responses:
+        "200":
+          description: Task completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  parameters:
+    TaskId:
+      name: id
+      in: path
+      required: true
+      description: Unique task identifier.
+      schema:
+        type: string
+        format: uuid
+      example: 2d7d2c77-cf40-43e4-b468-b655bb2ad72b
+
+  responses:
+    BadRequest:
+      description: The request is invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            message: The task title is required.
+
+    NotFound:
+      description: The requested task was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            message: Task not found.
+
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - title
+        - isCompleted
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2d7d2c77-cf40-43e4-b468-b655bb2ad72b
+        title:
+          type: string
+          example: Buy groceries
+        description:
+          type: string
+          nullable: true
+          example: Milk, eggs, and bread
+        isCompleted:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-05-20T10:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2026-05-20T10:30:00Z
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: Buy groceries
+        description:
+          type: string
+          nullable: true
+          example: Milk, eggs, and bread
+
+    UpdateTaskRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: Buy groceries
+        description:
+          type: string
+          nullable: true
+          example: Milk, eggs, and bread
+
+    DeleteTaskResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Task deleted successfully.
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: The request is invalid.

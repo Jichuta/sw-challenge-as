@@ -1,0 +1,6 @@
+@swchallenge1_HostAddress = http://localhost:5065
+
+GET {{swchallenge1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
