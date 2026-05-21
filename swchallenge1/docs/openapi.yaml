@@ -219,6 +219,9 @@ components:
           type: string
           nullable: true
           example: Milk, eggs, and bread
+        isCompleted:
+          type: boolean
+          example: false
 
     DeleteTaskResponse:
       type: object
